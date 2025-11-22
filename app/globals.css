@@ -1,0 +1,115 @@
+/* Import Tailwind - this should work without errors */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom styles using CSS variables */
+:root {
+  --primary-50: #fefce8;
+  --primary-100: #fef9c3;
+  --primary-500: #eab308;
+  --primary-600: #ca8a04;
+  --primary-900: #713f12;
+  --charcoal-50: #f8fafc;
+  --charcoal-100: #f1f5f9;
+  --charcoal-500: #64748b;
+  --charcoal-800: #1e293b;
+  --charcoal-900: #0f172a;
+  --cream: #fef7ed;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--charcoal-900);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Component classes */
+.btn-primary {
+  background-color: var(--primary-500);
+  color: white;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  transform: scale(1);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-600);
+  transform: scale(1.05);
+}
+
+.btn-primary:focus {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.btn-secondary {
+  background-color: var(--charcoal-800);
+  color: white;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  transform: scale(1);
+}
+
+.btn-secondary:hover {
+  background-color: var(--charcoal-900);
+  transform: scale(1.05);
+}
+
+.card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--charcoal-100);
+  transition: all 0.3s;
+  transform: translateY(0);
+}
+
+.card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--charcoal-200);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.input-field:focus {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 0;
+  border-color: transparent;
+}
+
+/* Utility classes */
+.text-gradient {
+  background: linear-gradient(to right, var(--primary-500), var(--primary-600));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-luxury {
+  background: linear-gradient(135deg, #fef7ed 0%, #fed7aa 50%, #fdba74 100%);
+}
+
+/* Font families */
+.font-sans {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
