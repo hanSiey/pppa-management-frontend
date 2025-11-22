@@ -15,6 +15,9 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
+  // FIX: Add your production domain here to remove the localhost warning
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || ''), 
+  
   title: 'The Parliament of Plating & Pouring Affairs',
   description: 'Extraordinary culinary experiences merging South African heritage with world-class gastronomy',
   keywords: 'culinary experiences, South African cuisine, fine dining, events, reservations',
