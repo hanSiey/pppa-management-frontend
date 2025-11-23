@@ -56,14 +56,15 @@ export default function AdminRootLayout({
                     <div className="flex items-center justify-end p-4 border-b border-charcoal-100">
                       <button 
                         onClick={() => setSidebarOpen(false)}
-                        className="p-2 rounded-md text-charcoal-500 hover:bg-charcoal-100"
+                        className="p-2 rounded-md text-charcoal-500 hover:bg-charcoal-100 hover:text-charcoal-900"
                       >
                         <XMarkIcon className="w-6 h-6" />
                       </button>
                     </div>
                     
                     {/* Render the Navigation Links here for Mobile */}
-                    <div className="flex-1 overflow-y-auto">
+                    {/* Explicitly setting text color and display block to ensure visibility */}
+                    <div className="flex-1 overflow-y-auto text-charcoal-900 block">
                         <SideNavigation />
                     </div>
                   </motion.div>
@@ -95,7 +96,6 @@ export default function AdminRootLayout({
               </div>
 
               {/* Dedicated Admin Header (TopNavigation) */}
-              {/* You can choose to hide this on mobile if it duplicates info, or keep it */}
               <TopNavigation />
 
               {/* Main Content Area */}

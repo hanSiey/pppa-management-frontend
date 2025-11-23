@@ -30,8 +30,10 @@ export function SideNavigation() {
   const { user } = useAuth() // Get current authenticated user
 
   return (
-    <div className="hidden md:flex md:flex-col md:w-64 bg-charcoal-900 border-r border-charcoal-800">
-      <div className="flex items-center justify-center h-16 px-4 bg-charcoal-950 shadow-sm">
+    // FIX: Changed 'flex md:flex-col' to 'flex flex-col' so it is vertical on ALL screens.
+    // Added 'h-full' and 'w-full' to ensure it fills the parent container (mobile drawer or desktop sidebar).
+    <div className="flex flex-col h-full w-full md:w-64 bg-charcoal-900 border-r border-charcoal-800">
+      <div className="flex items-center justify-center h-16 px-4 bg-charcoal-950 shadow-sm flex-shrink-0">
         <h1 className="text-white font-serif font-bold text-lg tracking-wider">
           PPPA <span className="text-primary-500">ADMIN</span>
         </h1>
@@ -50,7 +52,6 @@ export function SideNavigation() {
                   ${isActive 
                     ? 'bg-primary-600 text-white shadow-md' 
                     : 'text-gray-300 hover:bg-charcoal-800 hover:text-white' 
-                    /* Changed to text-gray-300 for better visibility */
                   }
                 `}
               >
