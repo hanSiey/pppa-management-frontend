@@ -73,8 +73,8 @@ export default function RootLayout({
                 <div>
                   <h4 className="font-semibold mb-4">Contact</h4>
                   <address className="not-italic text-charcoal-300 space-y-2">
-                    <p>hello@parliamentplating.com</p>
-                    <p>+27 21 123 4567</p>
+                    <p>info@parliamentplating.com</p>
+                    <p>+27 71 251 4225</p>
                     <p>Johannesburg, South Africa</p>
                   </address>
                 </div>
