@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import { 
   CalendarIcon, 
   MapPinIcon, 
-  ClockIcon, 
   MagnifyingGlassIcon,
   ArrowRightIcon,
   FunnelIcon
@@ -54,14 +53,13 @@ export default function EventsPage() {
 
   useEffect(() => {
     fetchEvents()
-  }, [filters.location, filters.start_date]) // Auto-fetch on filter change (excluding text search for debounce behavior if desired, but here we keep it simple)
+  }, [filters.location, filters.start_date]) 
 
   const fetchEvents = async () => {
     try {
       const params = new URLSearchParams()
       if (filters.location) params.append('location', filters.location)
       if (filters.start_date) params.append('start_date', filters.start_date)
-      // Note: We can add a 'search' param if the backend supports ?search=...
       
       const response = await api.get(`events/events/?${params.toString()}`)
       setEvents(response.data.results || response.data)
@@ -72,8 +70,6 @@ export default function EventsPage() {
     }
   }
 
-  // Filter client-side for text search if backend doesn't support it, 
-  // or just to refine the displayed list.
   const filteredEvents = events.filter(event => 
     event.title.toLowerCase().includes(filters.search.toLowerCase()) ||
     (event.description && event.description.toLowerCase().includes(filters.search.toLowerCase()))
@@ -168,9 +164,15 @@ export default function EventsPage() {
              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredEvents.map((event, index) => {
                     const date = formatDate(event.start_datetime);
-                    const minPrice = event.ticket_types?.length > 0 
-                        ? Math.min(...event.ticket_types.map(t => parseFloat(t.price))) 
-                        : 0;
+                    
+                    // Logic for price display
+                    // Robust check: Ensure ticket_types exists and has entries before calculating
+                    const prices = event.ticket_types?.map(t => parseFloat(t.price)) || [];
+                    const hasPrices = prices.length > 0;
+                    
+                    const minPrice = hasPrices ? Math.min(...prices) : 0;
+                    const maxPrice = hasPrices ? Math.max(...prices) : 0;
+                    const isRange = minPrice !== maxPrice && prices.length > 1;
 
                     return (
                         <motion.div
@@ -211,12 +213,21 @@ export default function EventsPage() {
                                 </div>
                                 
                                 <div className="mt-auto pt-4 border-t border-charcoal-50 flex items-center justify-between">
-                                    <div>
-                                        <span className="block text-xs text-charcoal-400">From</span>
-                                        <span className="font-bold text-primary-600">
-                                            {minPrice > 0 ? `R ${minPrice.toLocaleString()}` : 'Free'}
-                                        </span>
-                                    </div>
+                                    {hasPrices ? (
+                                        <div>
+                                            <span className="block text-xs text-charcoal-400">
+                                                {isRange ? 'From' : 'Price'}
+                                            </span>
+                                            <span className="font-bold text-primary-600">
+                                                R {minPrice.toLocaleString(undefined, {minimumFractionDigits: 2})}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center text-primary-600 font-medium text-sm">
+                                            <span>View Details</span>
+                                        </div>
+                                    )}
+
                                     <a 
                                         href={`/events/${event.slug}`}
                                         className="w-10 h-10 rounded-full bg-charcoal-50 flex items-center justify-center text-charcoal-900 group-hover:bg-charcoal-900 group-hover:text-white transition-all"

@@ -2,17 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { 
   CalendarIcon, 
   MapPinIcon, 
-  ClockIcon,
+  ClockIcon, 
   StarIcon,
   ArrowLongLeftIcon,
   CheckCircleIcon,
   MinusIcon,
   PlusIcon,
-  BanknotesIcon
+  BanknotesIcon,
+  LockClosedIcon
 } from '@heroicons/react/24/outline'
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid'
 import api from '@/lib/api'
@@ -73,6 +74,7 @@ interface BankingDetail {
 
 export default function EventDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedTicket, setSelectedTicket] = useState<TicketType | null>(null)
@@ -94,7 +96,8 @@ export default function EventDetailPage() {
     if (params.slug) {
       fetchEvent()
     }
-    fetchCurrentUser()
+    // Note: We do NOT fetch currentUser here to avoid 401 redirects for guests.
+    // Auth is checked only when "Proceed to Payment" is clicked.
     fetchBankingDetails()
   }, [params.slug])
 
@@ -107,21 +110,6 @@ export default function EventDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const fetchCurrentUser = async () => {
-      try {
-          const response = await api.get('/auth/me/');
-          setCurrentUser(response.data);
-          setReservationForm(prev => ({
-              ...prev,
-              guest_email: response.data.email || '',
-              full_name: response.data.full_name || '',
-              phone_number: response.data.phone_number || ''
-          }));
-      } catch (error) {
-          // User is not logged in, ignore
-      }
   }
 
   const fetchBankingDetails = async () => {
@@ -163,6 +151,36 @@ export default function EventDetailPage() {
       alert(msg)
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleProceedToPayment = async () => {
+    if (!selectedTicket) return;
+
+    try {
+        // We attempt to fetch the user profile here.
+        // If this fails (401), we assume they are a guest and redirect.
+        const response = await api.get('/auth/me/');
+        const user = response.data;
+        
+        setCurrentUser(user);
+        
+        // Pre-fill form with authenticated user data
+        setReservationForm(prev => ({
+            ...prev,
+            guest_email: user.email || '',
+            full_name: user.full_name || '',
+            phone_number: user.phone_number || ''
+        }));
+        
+        // Open the modal
+        setShowReservationForm(true);
+
+    } catch (error) {
+        // User is not authenticated -> Redirect to login
+        // We pass the current URL as a redirect param so they can come back
+        const currentPath = window.location.pathname;
+        router.push(`/login?redirect=${currentPath}`);
     }
   }
 
@@ -406,13 +424,15 @@ export default function EventDetailPage() {
                                         </div>
                                         <p className="text-xs text-charcoal-500 mt-1 italic text-center">Deposit required to secure booking.</p>
                                     </div>
-
+                                    
                                     <button 
-                                        onClick={() => setShowReservationForm(true)}
-                                        className="w-full btn-primary py-4 shadow-lg shadow-primary-500/20 text-lg"
+                                        onClick={handleProceedToPayment}
+                                        className="w-full btn-primary py-4 shadow-lg shadow-primary-500/20 text-lg flex items-center justify-center gap-2"
                                     >
+                                        <LockClosedIcon className="w-5 h-5" />
                                         Proceed to Payment
                                     </button>
+                                    
                                 </motion.div>
                             )}
                         </AnimatePresence>
